@@ -51,12 +51,17 @@ export default function GeneratePage() {
       });
       
       const data = await response.json();
-      if (data.sessionId) {
+      if (response.ok && data.sessionId) {
         // Redirect to chat follow-up page
         router.push(`/session/${data.sessionId}`);
+      } else {
+        alert(data.error || "Failed to create session. Please check your inputs.");
+        setLoading(false);
+        clearInterval(interval);
       }
     } catch (error) {
       console.error("Failed to create session", error);
+      alert("An unexpected error occurred. Please try again.");
       setLoading(false);
       clearInterval(interval);
     }
