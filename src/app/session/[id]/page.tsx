@@ -16,8 +16,25 @@ export default function SessionPage({ params }: { params: Promise<{ id: string }
   useEffect(() => {
     async function fetchQuestions() {
       try {
+        const storedInput = localStorage.getItem(`session_${id}_input`);
+        if (!storedInput) {
+          router.push("/generate");
+          return;
+        }
+        
+        // If QA already exists in localStorage, skip fetching
+        const storedQA = localStorage.getItem(`session_${id}_qa`);
+        if (storedQA) {
+          router.push(`/session/${id}/generate`);
+          return;
+        }
+
+        const formInput = JSON.parse(storedInput);
+
         const response = await fetch(`/api/session/${id}/clarify`, {
           method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ formInput }),
         });
         
         if (!response.ok) {
@@ -56,20 +73,25 @@ export default function SessionPage({ params }: { params: Promise<{ id: string }
     setSubmitting(true);
     
     try {
-      const response = await fetch(`/api/session/${id}/answer`, {
+      // Save answers to localStorage for stateless generation
+      const clarifyingQA = questions.map((q, i) => ({
+        question: q,
+        answer: answers[i] || ""
+      }));
+      
+      localStorage.setItem(`session_${id}_qa`, JSON.stringify(clarifyingQA));
+      
+      // Optionally call the answer API just for validation (stateless)
+      await fetch(`/api/session/${id}/answer`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ answers }),
       });
       
-      if (response.ok) {
-        router.push(`/session/${id}/generate`);
-      } else {
-        throw new Error("Failed to save answers");
-      }
+      router.push(`/session/${id}/generate`);
     } catch (err) {
       console.error(err);
-      setError("Failed to save your answers.");
+      setError("Failed to process your answers.");
       setSubmitting(false);
     }
   };

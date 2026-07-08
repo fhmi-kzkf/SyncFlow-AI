@@ -23,19 +23,32 @@ export default function PreviewPage({ params }: { params: Promise<{ id: string }
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchDocs() {
+    async function loadDocs() {
       try {
-        const res = await fetch(`/api/session/${id}`);
-        if (!res.ok) throw new Error("Failed to load");
-        const data = await res.json();
-        setDocuments(data.documents);
+        const prd = localStorage.getItem(`session_${id}_prd`);
+        const trd = localStorage.getItem(`session_${id}_trd`);
+        const schema = localStorage.getItem(`session_${id}_schema`);
+        const appflow = localStorage.getItem(`session_${id}_appflow`);
+        
+        if (!prd && !trd && !schema && !appflow) {
+           setDocuments(null);
+           setLoading(false);
+           return;
+        }
+
+        setDocuments({
+          prd: { content: prd },
+          trd: { content: trd },
+          schema: { content: schema },
+          appflow: { content: appflow }
+        });
         setLoading(false);
       } catch (err) {
         console.error(err);
         setLoading(false);
       }
     }
-    fetchDocs();
+    loadDocs();
   }, [id]);
 
   const handleDownload = (filename: string, content: string) => {
@@ -46,6 +59,35 @@ export default function PreviewPage({ params }: { params: Promise<{ id: string }
     document.body.appendChild(element); // Required for this to work in FireFox
     element.click();
     document.body.removeChild(element);
+  };
+
+  const handleExportAll = async () => {
+    try {
+      const prd = localStorage.getItem(`session_${id}_prd`);
+      const trd = localStorage.getItem(`session_${id}_trd`);
+      const schema = localStorage.getItem(`session_${id}_schema`);
+      const appflow = localStorage.getItem(`session_${id}_appflow`);
+
+      const res = await fetch(`/api/session/${id}/export`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prd, trd, schema, appflow })
+      });
+      
+      if (!res.ok) throw new Error("Failed to generate ZIP");
+      
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `syncflow-docs-${id}.zip`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to export documents");
+    }
   };
 
   if (loading) {
@@ -73,12 +115,12 @@ export default function PreviewPage({ params }: { params: Promise<{ id: string }
             <span className="thin-label uppercase tracking-widest block mb-4">The Result</span>
             <h1 className="display-headline text-[50px]">Specifications.</h1>
           </div>
-          <a 
-            href={`/api/session/${id}/export`}
+          <button 
+            onClick={handleExportAll}
             className="btn-pill-outline bg-bone-white text-obsidian px-[30px]"
           >
             Export All as .ZIP
-          </a>
+          </button>
         </div>
 
         {/* Tabs Navigation */}

@@ -30,29 +30,65 @@ export default function GenerateDashboardPage({ params }: { params: Promise<{ id
     setHasStarted(true);
 
     const generateSequence = async () => {
+      // Get state from localStorage
+      const storedInput = localStorage.getItem(`session_${id}_input`);
+      const storedQA = localStorage.getItem(`session_${id}_qa`);
+      
+      const payload = {
+        formInput: storedInput ? JSON.parse(storedInput) : null,
+        clarifyingQA: storedQA ? JSON.parse(storedQA) : []
+      };
+
+      const fetchOpts = {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      };
+
       // 1. Generate PRD
       setStatuses(s => ({ ...s, prd: 'generating' }));
       try {
-        const prdRes = await fetch(`/api/session/${id}/generate/prd`, { method: "POST" });
+        const prdRes = await fetch(`/api/session/${id}/generate/prd`, fetchOpts);
         if (!prdRes.ok) throw new Error("PRD failed");
+        const prdData = await prdRes.json();
+        const prdContent = prdData.document;
+        localStorage.setItem(`session_${id}_prd`, prdContent);
         setStatuses(s => ({ ...s, prd: 'done' }));
 
         // 2. Generate TRD
         setStatuses(s => ({ ...s, trd: 'generating' }));
-        const trdRes = await fetch(`/api/session/${id}/generate/trd`, { method: "POST" });
+        const trdRes = await fetch(`/api/session/${id}/generate/trd`, {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prdContent })
+        });
         if (!trdRes.ok) throw new Error("TRD failed");
+        const trdData = await trdRes.json();
+        const trdContent = trdData.document;
+        localStorage.setItem(`session_${id}_trd`, trdContent);
         setStatuses(s => ({ ...s, trd: 'done' }));
 
         // 3. Generate Schema
         setStatuses(s => ({ ...s, schema: 'generating' }));
-        const schemaRes = await fetch(`/api/session/${id}/generate/schema`, { method: "POST" });
+        const schemaRes = await fetch(`/api/session/${id}/generate/schema`, {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prdContent, trdContent })
+        });
         if (!schemaRes.ok) throw new Error("Schema failed");
+        const schemaData = await schemaRes.json();
+        const schemaContent = schemaData.document;
+        localStorage.setItem(`session_${id}_schema`, schemaContent);
         setStatuses(s => ({ ...s, schema: 'done' }));
 
         // 4. Generate App Flow
         setStatuses(s => ({ ...s, appflow: 'generating' }));
-        const appflowRes = await fetch(`/api/session/${id}/generate/appflow`, { method: "POST" });
+        const appflowRes = await fetch(`/api/session/${id}/generate/appflow`, {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prd: prdContent, schema: schemaContent })
+        });
         if (!appflowRes.ok) throw new Error("App Flow failed");
+        const appflowData = await appflowRes.json();
+        const appflowContent = appflowData.document;
+        localStorage.setItem(`session_${id}_appflow`, appflowContent);
         setStatuses(s => ({ ...s, appflow: 'done' }));
 
         setAllDone(true);

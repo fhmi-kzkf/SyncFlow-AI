@@ -2,34 +2,27 @@ import { NextResponse } from "next/server";
 import { sessionStore } from "@/lib/sessionStore";
 import JSZip from "jszip";
 
-export async function GET(
+export async function POST(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const { id } = await params;
-    const session = sessionStore.getSession(id);
+    const body = await request.json();
+    const { prd, trd, schema, appflow } = body;
     
-    if (!session) {
-      return NextResponse.json({ error: "Session not found" }, { status: 404 });
+    if (!prd && !trd && !schema && !appflow) {
+      return NextResponse.json({ error: "No documents to export" }, { status: 400 });
     }
 
     const zip = new JSZip();
 
-    if (session.documents.prd.content) {
-      zip.file("PRD.md", session.documents.prd.content);
-    }
-    if (session.documents.trd.content) {
-      zip.file("TRD.md", session.documents.trd.content);
-    }
-    if (session.documents.schema.content) {
-      zip.file("schema.prisma", session.documents.schema.content);
-    }
-    if (session.documents.appflow.content) {
-      zip.file("AppFlow.md", session.documents.appflow.content);
-    }
+    if (prd) zip.file("PRD.md", prd);
+    if (trd) zip.file("TRD.md", trd);
+    if (schema) zip.file("schema.prisma", schema);
+    if (appflow) zip.file("AppFlow.md", appflow);
 
-    const content = await zip.generateAsync({ type: "blob" });
+    const content = await zip.generateAsync({ type: "nodebuffer" });
 
     return new NextResponse(content, {
       headers: {

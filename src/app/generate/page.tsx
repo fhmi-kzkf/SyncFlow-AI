@@ -41,17 +41,22 @@ export default function GeneratePage() {
     }, 2000);
     
     try {
+      const payload = {
+        ...formData,
+        features: features.filter(f => f.trim() !== "")
+      };
+
       const response = await fetch("/api/session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          ...formData,
-          features: features.filter(f => f.trim() !== "")
-        }),
+        body: JSON.stringify(payload),
       });
       
       const data = await response.json();
       if (response.ok && data.sessionId) {
+        // Save state to localStorage for stateless Vercel deployment
+        localStorage.setItem(`session_${data.sessionId}_input`, JSON.stringify(payload));
+
         // Redirect to chat follow-up page
         router.push(`/session/${data.sessionId}`);
       } else {
