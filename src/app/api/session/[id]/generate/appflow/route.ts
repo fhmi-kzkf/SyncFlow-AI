@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
-import { sessionStore } from "@/lib/sessionStore";
 import { generateContent } from "@/lib/fireworks";
+
+export const maxDuration = 60;
 
 export async function POST(
   request: Request,
