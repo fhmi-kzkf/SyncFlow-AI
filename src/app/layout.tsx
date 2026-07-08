@@ -27,7 +27,7 @@ export default function RootLayout({
         <main className="flex-grow">
           {children}
         </main>
-        
+
         {/* Animated Marquee Footer */}
         <footer className="w-full bg-bone-white text-obsidian pt-16 pb-8 overflow-hidden flex flex-col relative z-20">
           <div className="w-full border-b border-obsidian/20 pb-16 flex overflow-hidden">
@@ -46,7 +46,7 @@ export default function RootLayout({
               </div>
             </div>
           </div>
-          
+
           <div className="w-full max-w-[1400px] mx-auto px-8 pt-12 flex flex-col md:flex-row justify-between items-start gap-12">
             <div className="flex flex-col max-w-[300px]">
               <span className="font-suisse-intl-webm text-[14px] font-medium mb-2 tracking-tight">Innovate. Customize. Collaborate.</span>
@@ -54,11 +54,11 @@ export default function RootLayout({
                 Find out more <span className="font-times-new-roman font-normal">↗</span>
               </a>
             </div>
-            
+
             <div className="flex gap-16 md:gap-32 text-[14px] font-suisse-intl-webm">
               <div className="flex flex-col gap-4">
                 <span className="text-obsidian/50 font-editorial-new uppercase tracking-widest text-[12px] mb-2">Socials</span>
-                <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="font-medium hover:text-radish-bloom transition-colors">GitHub</a>
+                <a href="https://github.com/fhmi-kzkf/SyncFlow-AI" target="_blank" rel="noopener noreferrer" className="font-medium hover:text-radish-bloom transition-colors">GitHub</a>
               </div>
               <div className="flex flex-col gap-4">
                 <span className="text-obsidian/50 font-editorial-new uppercase tracking-widest text-[12px] mb-2">//</span>
