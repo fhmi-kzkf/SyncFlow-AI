@@ -1,36 +1,62 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SyncFlow ✦ AI
+
+SyncFlow is an advanced agentic AI orchestration platform designed to automate and streamline the software development lifecycle. By dynamically eliciting product requirements, SyncFlow orchestrates prompt chaining across multiple LLMs to instantly generate comprehensive Product Requirements Documents (PRD), Technical Requirements Documents (TRD), Database Schemas, and App Flow maps.
+
+## Features
+
+- **Dynamic Elicitation**: An intelligent PM Agent that analyzes your brief and asks clarifying questions only when critical ambiguities exist.
+- **Sequential Prompt Chaining**: Automates the pipeline. The PRD feeds into the TRD, which feeds into the Database Schema—ensuring zero divergence between product and engineering specs.
+- **Prisma Schemas**: Generates clean, production-ready Prisma database schemas.
+- **App Flow Map**: Maps user journeys and screen inventories for immediate handoff to design teams.
+- **Export Ready**: Download your complete document suite as a `.zip` archive, ready to be pushed to your repository.
+
+## Tech Stack
+
+- **Framework**: Next.js 15 (React 19)
+- **Styling**: Tailwind CSS v4 & Custom CSS with GSAP Animations
+- **AI Integration**: Fireworks AI (Qwen 3.7 Plus & Llama 3)
+- **Architecture**: Modular Agentic Pipeline & Dynamic Document Generation
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Ensure you have Node.js (v18+) installed on your machine.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Installation
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/syncflow-ai.git
+   cd syncflow-ai/app
+   ```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-## Learn More
+3. Configure Environment Variables:
+   The project uses a `.env` file. Add your Fireworks API key:
+   ```env
+   FIREWORKS_API_KEY=your_fireworks_api_key_here
+   ```
+   *(Note: Never commit your `.env` file to version control)*
 
-To learn more about Next.js, take a look at the following resources:
+4. Run the development server:
+   ```bash
+   npm run dev
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+5. Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Architecture Overview
 
-## Deploy on Vercel
+SyncFlow leverages a modular pipeline to ensure high-quality software specifications:
+- **Elicitation Engine**: Analyzes user input to dynamically detect missing context.
+- **Document Generators**: Dedicated modules for PRD, TRD, and Schema generation.
+- **In-Memory Store**: Fast, lightweight session management for seamless user experiences during generation.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## License
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This project is licensed under the MIT License.

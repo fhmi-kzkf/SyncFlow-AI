@@ -1,26 +1,133 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  /* Colors */
+  --color-bone-white: #ffffff;
+  --color-smoke: #808080;
+  --color-obsidian: #000000;
+  --color-graphite: #333333;
+  --color-radish-bloom: #eb516d;
+
+  /* Typography */
+  --font-times-new-roman: 'Times New Roman', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-suisse-intl-webm: var(--font-inter), 'Suisse Intl WebM', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-editorial-new: 'Editorial New', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  /* Typography — Scale */
+  --text-caption: 14px;
+  --leading-caption: 1.2;
+  --text-body: 16px;
+  --leading-body: 1.4;
+  --tracking-body: -0.13px;
+  --text-subheading: 18px;
+  --leading-subheading: 1.2;
+  --tracking-subheading: -0.14px;
+  --text-heading-sm: 24px;
+  --leading-heading-sm: 1.2;
+  --tracking-heading-sm: -0.19px;
+  --text-heading: 36px;
+  --leading-heading: 1.16;
+  --tracking-heading: -0.29px;
+  --text-display: 90px;
+  --leading-display: 0.82;
+  --tracking-display: -0.9px;
+
+  /* Spacing */
+  --spacing-7: 7px;
+  --spacing-9: 9px;
+  --spacing-10: 10px;
+  --spacing-13: 13px;
+  --spacing-15: 15px;
+  --spacing-20: 20px;
+  --spacing-22: 22px;
+  --spacing-25: 25px;
+  --spacing-35: 35px;
+  --spacing-40: 40px;
+  --spacing-50: 50px;
+  --spacing-60: 60px;
+  --spacing-70: 70px;
+  --spacing-80: 80px;
+  --spacing-100: 100px;
+  --spacing-120: 120px;
+
+  /* Border Radius */
+  --radius-3xl: 24px;
+  --radius-3xl-2: 40px;
+  --radius-3xl-3: 44.0001px;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  html, body {
+    @apply bg-obsidian text-bone-white font-suisse-intl-webm antialiased;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Component Classes based on DESIGN.md */
+@layer components {
+  .display-headline {
+    @apply font-times-new-roman text-display leading-display tracking-display text-bone-white;
+  }
+  
+  .btn-pill-outline {
+    @apply border border-bone-white rounded-[40px] text-bone-white bg-transparent px-[25px] py-[10px] text-[14px] leading-caption tracking-body hover:bg-bone-white hover:text-obsidian transition-colors duration-300;
+  }
+
+  .radish-panel {
+    @apply bg-radish-bloom text-bone-white rounded-none w-full py-[40px];
+  }
+
+  .editorial-body {
+    @apply font-suisse-intl-webm text-body leading-body tracking-body text-bone-white max-w-[600px] text-left;
+  }
+  
+  .hairline-divider {
+    @apply border-t border-smoke w-full m-0 p-0;
+  }
+
+  .section-heading {
+    @apply font-times-new-roman text-[32px] font-normal leading-[1.05] tracking-[-0.01em] text-bone-white;
+  }
+
+  .sans-subheading {
+    @apply font-suisse-intl-webm text-heading leading-heading text-bone-white;
+  }
+
+  .thin-label {
+    @apply font-editorial-new text-caption font-thin leading-caption text-bone-white;
+  }
+
+  .ghost-nav-link {
+    @apply font-suisse-intl-webm text-[14px] text-bone-white bg-transparent border-none px-[10px] hover:text-smoke transition-colors duration-300;
+  }
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+/* Global scrollbar override at root level */
+html, body {
+  overflow-x: hidden !important;
+  scrollbar-color: #333333 #000000;
+  scrollbar-width: thin;
+}
+
+::-webkit-scrollbar {
+  width: 8px !important;
+  height: 8px !important;
+}
+
+::-webkit-scrollbar-track {
+  background: #000000 !important;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #333333 !important;
+  border-radius: 4px !important;
+  border: 2px solid #000000 !important;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #eb516d !important;
 }
