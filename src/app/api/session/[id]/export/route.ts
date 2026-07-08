@@ -22,7 +22,7 @@ export async function POST(
     if (schema) zip.file("schema.prisma", schema);
     if (appflow) zip.file("AppFlow.md", appflow);
 
-    const content = await zip.generateAsync({ type: "nodebuffer" });
+    const content = await zip.generateAsync({ type: "blob" });
 
     return new NextResponse(content, {
       headers: {
