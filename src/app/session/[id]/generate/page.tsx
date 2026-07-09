@@ -24,6 +24,7 @@ export default function GenerateDashboardPage({ params }: { params: Promise<{ id
 
   const [allDone, setAllDone] = useState(false);
   const [hasStarted, setHasStarted] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
 
   useEffect(() => {
     if (hasStarted) return;
@@ -49,7 +50,10 @@ export default function GenerateDashboardPage({ params }: { params: Promise<{ id
       setStatuses(s => ({ ...s, prd: 'generating' }));
       try {
         const prdRes = await fetch(`/api/session/${id}/generate/prd`, fetchOpts);
-        if (!prdRes.ok) throw new Error("PRD failed");
+        if (!prdRes.ok) {
+          const errData = await prdRes.json().catch(() => ({}));
+          throw new Error(errData.details || errData.error || "PRD failed");
+        }
         const prdData = await prdRes.json();
         const prdContent = prdData.document;
         localStorage.setItem(`session_${id}_prd`, prdContent);
@@ -92,8 +96,9 @@ export default function GenerateDashboardPage({ params }: { params: Promise<{ id
         setStatuses(s => ({ ...s, appflow: 'done' }));
 
         setAllDone(true);
-      } catch (error) {
+      } catch (error: any) {
         console.error("Generation sequence failed", error);
+        setErrorMsg(error?.message || String(error));
         // Find which one failed and set it to error
         setStatuses(s => {
           const newS = { ...s };
@@ -176,12 +181,15 @@ export default function GenerateDashboardPage({ params }: { params: Promise<{ id
               View Documents
             </Link>
           ) : Object.values(statuses).includes('error') ? (
-            <button 
-              onClick={() => window.location.reload()}
-              className="btn-pill-outline border-red-500 text-red-500"
-            >
-              Retry Failed Steps
-            </button>
+            <div className="flex flex-col items-center gap-4">
+              {errorMsg && <p className="text-red-400 font-suisse-intl-webm text-sm text-center max-w-[600px]">Error details: {errorMsg}</p>}
+              <button 
+                onClick={() => window.location.reload()}
+                className="btn-pill-outline border-red-500 text-red-500"
+              >
+                Retry Failed Steps
+              </button>
+            </div>
           ) : (
             <div className="animate-pulse thin-label text-smoke">
               Please do not close this window...
