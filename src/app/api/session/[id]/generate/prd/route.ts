@@ -28,7 +28,7 @@ Output ONLY the Markdown content. Do not include any conversational filler.`;
 
     let qaContext = "";
     if (clarifyingQA && clarifyingQA.length > 0) {
-      qaContext = "\n\nClarifying Q&A:\n" + clarifyingQA.map(qa => `Q: ${qa.question}\nA: ${qa.answer}`).join("\n");
+      qaContext = "\n\nClarifying Q&A:\n" + clarifyingQA.map((qa: { question: string, answer: string }) => `Q: ${qa.question}\nA: ${qa.answer}`).join("\n");
     }
 
     const userPrompt = `Product Idea: <USER_INPUT>${formInput.idea}</USER_INPUT>
