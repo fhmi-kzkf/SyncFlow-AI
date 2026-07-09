@@ -21,6 +21,7 @@ export default function PreviewPage({ params }: { params: Promise<{ id: string }
   const [activeTab, setActiveTab] = useState<Tab>('prd');
   const [documents, setDocuments] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
     async function loadDocs() {
@@ -88,6 +89,36 @@ export default function PreviewPage({ params }: { params: Promise<{ id: string }
       console.error(err);
       alert("Failed to export documents");
     }
+  const handleCopyPrompt = async () => {
+    try {
+      const prd = localStorage.getItem(`session_${id}_prd`) || "";
+      const trd = localStorage.getItem(`session_${id}_trd`) || "";
+      const schema = localStorage.getItem(`session_${id}_schema`) || "";
+      const appflow = localStorage.getItem(`session_${id}_appflow`) || "";
+
+      const promptText = `Here is the complete specification suite for my application. Please use this context to help me build it:
+
+# 1. Product Requirements Document (PRD)
+${prd}
+
+# 2. Technical Requirements Document (TRD)
+${trd}
+
+# 3. Database Schema (Prisma)
+\`\`\`prisma
+${schema}
+\`\`\`
+
+# 4. App Flow & Screen Inventory
+${appflow}
+`;
+      await navigator.clipboard.writeText(promptText);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy:", err);
+      alert("Failed to copy prompt to clipboard");
+    }
   };
 
   if (loading) {
@@ -115,12 +146,20 @@ export default function PreviewPage({ params }: { params: Promise<{ id: string }
             <span className="thin-label uppercase tracking-widest block mb-4">The Result</span>
             <h1 className="display-headline text-[50px]">Specifications.</h1>
           </div>
-          <button 
-            onClick={handleExportAll}
-            className="btn-pill-outline bg-bone-white text-obsidian px-[30px]"
-          >
-            Export All as .ZIP
-          </button>
+          <div className="flex gap-4">
+            <button 
+              onClick={handleCopyPrompt}
+              className="btn-pill-outline border-radish-bloom text-radish-bloom px-[30px] hover:bg-radish-bloom hover:text-bone-white transition-colors"
+            >
+              {copied ? "Copied to Clipboard!" : "Copy as Prompt"}
+            </button>
+            <button 
+              onClick={handleExportAll}
+              className="btn-pill-outline bg-bone-white text-obsidian px-[30px]"
+            >
+              Export All as .ZIP
+            </button>
+          </div>
         </div>
 
         {/* Tabs Navigation */}
