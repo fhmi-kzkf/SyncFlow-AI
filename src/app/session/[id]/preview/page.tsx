@@ -89,6 +89,8 @@ export default function PreviewPage({ params }: { params: Promise<{ id: string }
       console.error(err);
       alert("Failed to export documents");
     }
+  };
+
   const handleCopyPrompt = async () => {
     try {
       const prd = localStorage.getItem(`session_${id}_prd`) || "";
