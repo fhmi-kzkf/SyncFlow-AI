@@ -51,8 +51,15 @@ export default function GenerateDashboardPage({ params }: { params: Promise<{ id
       try {
         const prdRes = await fetch(`/api/session/${id}/generate/prd`, fetchOpts);
         if (!prdRes.ok) {
-          const errData = await prdRes.json().catch(() => ({}));
-          throw new Error(errData.details || errData.error || "PRD failed");
+          const errText = await prdRes.text().catch(() => "");
+          let errMsg = `Status ${prdRes.status}`;
+          try {
+             const errData = JSON.parse(errText);
+             errMsg += `: ${errData.details || errData.error || "PRD failed"}`;
+          } catch(e) {
+             errMsg += ` - ${errText.substring(0, 100)}`;
+          }
+          throw new Error(errMsg);
         }
         const prdData = await prdRes.json();
         const prdContent = prdData.document;
